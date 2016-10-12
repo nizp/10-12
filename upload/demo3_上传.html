@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<link rel="stylesheet" href="css/demo.css">
+<script src="jquery-1.11.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="upload3.js" type="text/javascript" charset="utf-8"></script>
+<style>
+#bar{
+	height:4px;
+}
+#bar div{
+	height:4px;
+	background-color:#77B6FF;
+	width:0;
+}
+</style>
+</head>
+<body>
+	<section>
+		<div id="bar">
+			<div></div>
+		</div>
+		<header>
+			<input type="file" name="" id="file">
+			<a href="javascript:;">上传</a>
+		</header>
+		<div class="drag">
+			<span>请将图片拖拽至此处</span>
+		</div>
+		<div class="preview">
+			<ul>
+				
+			</ul>
+		</div>
+		<a href="javascript:;" id="upload">确认上传</a>
+	</section>
+<script type="text/javascript">
+	var upload = $.upload({
+		url:'php/post_file.php',
+		fileInput:$('#file'),
+		oSubmit:$('#upload'),
+		view:$('.preview'),
+		//创建视图的时候就调用createView函数
+		createView:function(fileDate){
+			//拿到文件源码
+			upload.viewFn(fileDate,function(data){
+				$('.preview ul').html('');
+				
+				$.each(fileDate,function(i,e){
+					//console.log(data[0]);
+					$('.preview ul').append($('<li><input type="button" value="X" /><img src="'+data[i]+'">'+e.name+'</li>'));
+				});
+				
+				$('.preview ul').find('input').click(function(){
+					var deletBtn = $('.preview ul')[0].getElementsByTagName('input');
+					
+					for(var i=0;i<deletBtn.length;i++){
+						deletBtn[i].index = i;
+					}
+					
+					//$(this).closest('li').remove();
+					
+					upload.deletFile(fileDate[$(this)[0].index]);
+					
+				});
+			});
+		},
+		onSelect:function(){
+			//alert('选择成功')
+		},
+		onProgress:function(num){
+			var iWidth = 600;
+			$('#bar div').animate({
+				width:num*iWidth
+			},function(){
+				$('#bar div').animate({
+					opacity:0
+				},800,function(){
+					$('#bar div').css({
+						opacity:1,
+						width:0
+					});
+				});
+			});
+		},
+		drag:$('.drag'),
+		onDragenter:function(){
+			console.log('移入')
+		},
+		onDrop:function(){
+			
+		}
+	});
+	
+	//console.log(upload)
+	
+</script>
+</body>
+</html>
